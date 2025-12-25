@@ -4,21 +4,16 @@
 # Usage (PowerShell):
 #   irm https://raw.githubusercontent.com/kcchien/skills-cli/main/install.ps1 | iex
 #
-# Or with custom options:
-#   $env:USER_INSTALL = "true"; irm ... | iex    # Install to user site-packages
+# Or run directly:
+#   .\install.ps1
+#   .\install.ps1 -User    # Install to user site-packages
 #
 
-param(
-    [string]$RepoUrl = "https://github.com/kcchien/skills-cli.git",
-    [switch]$User = $false
-)
-
 $ErrorActionPreference = "Stop"
+$RepoUrl = "https://github.com/kcchien/skills-cli.git"
 
 # Check for environment variable override
-if ($env:USER_INSTALL -eq "true") {
-    $User = $true
-}
+$UserInstall = $env:USER_INSTALL -eq "true"
 
 # Colors
 function Write-Info { Write-Host "[INFO] $args" -ForegroundColor Blue }
@@ -72,21 +67,17 @@ try {
 # Install via pip
 Write-Info "Installing skills-cli via pip..."
 
-$pipArgs = @("install", "--upgrade")
-if ($User) {
-    $pipArgs += "--user"
-}
-$pipArgs += "git+$RepoUrl"
-
 try {
-    $output = python -m pip @pipArgs 2>&1
-    if ($LASTEXITCODE -eq 0) {
-        Write-Success "Installed successfully"
+    if ($UserInstall) {
+        python -m pip install --upgrade --user "git+$RepoUrl"
     } else {
-        Write-Err "Installation failed"
-        Write-Host $output
-        exit 1
+        python -m pip install --upgrade "git+$RepoUrl"
     }
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "pip install failed with exit code $LASTEXITCODE"
+    }
+    Write-Success "Installed successfully"
 } catch {
     Write-Err "Installation failed: $_"
     exit 1
