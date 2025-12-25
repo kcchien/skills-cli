@@ -1,7 +1,8 @@
 """
 Skills CLI Command Line Interface
 
-此模組負責 CLI 的參數解析和指令處理，核心邏輯由 core 模組提供。
+This module handles CLI argument parsing and command processing.
+Core logic is provided by the core module.
 """
 
 import argparse
@@ -38,11 +39,11 @@ from .core import (
 
 
 # =============================================================================
-# 輔助函式
+# Helper Functions
 # =============================================================================
 
 def prepare_repo_info(args) -> dict:
-    """準備 repo 資訊，處理 branch 覆蓋和自動偵測。"""
+    """Prepare repo info, handling branch override and auto-detection."""
     repo_info = parse_repo_url(args.repo)
 
     if hasattr(args, 'branch') and args.branch:
@@ -55,7 +56,7 @@ def prepare_repo_info(args) -> dict:
 
 
 def format_skills_list(skills: list[dict], detailed: bool = False, show_source: bool = False) -> None:
-    """格式化並輸出 skills 列表。"""
+    """Format and output skills list."""
     if detailed:
         name_width = max(len(s.get("name") or s["folder_name"]) for s in skills)
         name_width = max(name_width, 4)
@@ -85,7 +86,7 @@ def format_skills_list(skills: list[dict], detailed: bool = False, show_source: 
 
 
 def interactive_select(skills: list[dict]) -> list[dict]:
-    """互動式 skill 選擇介面。"""
+    """Interactive skill selection interface."""
     print(f"\n{Colors.BOLD}Available Skills:{Colors.RESET}\n")
 
     for i, skill in enumerate(skills, 1):
@@ -137,7 +138,7 @@ def interactive_select(skills: list[dict]) -> list[dict]:
 # =============================================================================
 
 def cmd_list(args):
-    """list 指令：列出遠端 repo 中可用的 skills。"""
+    """list command: List available skills from a remote repo."""
     repo_info = prepare_repo_info(args)
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -156,7 +157,7 @@ def cmd_list(args):
 
 
 def cmd_installed(args):
-    """installed 指令：列出本機已安裝的 skills。"""
+    """installed command: List locally installed skills."""
     total_skills = 0
 
     if args.target:
@@ -211,7 +212,7 @@ def cmd_installed(args):
 
 
 def cmd_remove(args):
-    """remove 指令：移除已安裝的 skills。"""
+    """remove command: Remove installed skills."""
     if args.project:
         target_dir = get_claude_skills_dir("project")
         scope = "project"
@@ -301,7 +302,7 @@ def cmd_remove(args):
 
 
 def cmd_install(args):
-    """install 指令：從遠端 repo 安裝 skills 到本機。"""
+    """install command: Install skills from a remote repo to local."""
     repo_info = prepare_repo_info(args)
 
     if args.project:
@@ -385,7 +386,7 @@ def cmd_install(args):
 
 
 def cmd_pack(args):
-    """pack 指令：將 skills 打包成 zip 檔案。"""
+    """pack command: Pack skills into zip files."""
     repo_info = prepare_repo_info(args)
     output_dir = Path(args.output)
 
@@ -439,7 +440,7 @@ def cmd_pack(args):
 
 
 def cmd_sync(args):
-    """sync 指令：從遠端 repo 同步 skills。"""
+    """sync command: Sync skills from a remote repo."""
     repo_info = prepare_repo_info(args)
 
     if args.project:
@@ -518,10 +519,10 @@ def cmd_sync(args):
 
 
 def cmd_validate(args):
-    """validate 指令：驗證 SKILL.md 格式。"""
+    """validate command: Validate SKILL.md format."""
 
     def do_validate(skills_to_validate: list[dict]) -> int:
-        """執行實際的驗證邏輯。"""
+        """Execute the actual validation logic."""
         if not skills_to_validate:
             log_warning("No skills to validate")
             return 1
@@ -549,7 +550,7 @@ def cmd_validate(args):
             log_success(f"All {len(skills_to_validate)} skills are valid")
             return 0
 
-    # 根據不同來源取得要驗證的 skills
+    # Get skills to validate based on source
     if args.path:
         skill_path = Path(args.path)
         if skill_path.is_file():
@@ -558,7 +559,7 @@ def cmd_validate(args):
         return do_validate(skills_to_validate)
 
     elif args.repo:
-        # 從遠端 repo 驗證：需要在暫存目錄存在期間完成驗證
+        # Validate from remote repo: must complete validation while temp directory exists
         repo_info = prepare_repo_info(args)
         with tempfile.TemporaryDirectory() as tmp:
             tmp_dir = Path(tmp) / "repo"
@@ -567,7 +568,7 @@ def cmd_validate(args):
             return do_validate(skills_to_validate)
 
     else:
-        # 驗證本地安裝的 skills
+        # Validate locally installed skills
         if args.project:
             target_dir = get_claude_skills_dir("project")
         else:
@@ -577,7 +578,7 @@ def cmd_validate(args):
 
 
 def cmd_doctor(args):
-    """doctor 指令：診斷 skills 目錄結構。"""
+    """doctor command: Diagnose skills directory structure."""
     issues = []
     warnings = []
 
@@ -660,7 +661,7 @@ def cmd_doctor(args):
 # =============================================================================
 
 def main():
-    """CLI 程式進入點。"""
+    """CLI program entry point."""
     parser = argparse.ArgumentParser(
         prog="skills-cli",
         description="Cross-platform CLI for managing Claude Code skills",
