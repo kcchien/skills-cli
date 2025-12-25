@@ -18,6 +18,10 @@ from typing import Optional
 from urllib.parse import urlparse
 
 
+# Default repository (Anthropic official skills)
+DEFAULT_REPO = "https://github.com/anthropics/skills/tree/main/skills"
+
+
 # ANSI colors (disabled on Windows cmd without colorama)
 class Colors:
     RESET = "\033[0m"
@@ -443,6 +447,31 @@ def prepare_repo_info(args) -> dict:
     return repo_info
 
 
+def format_skills_list(skills: list[dict], detailed: bool = False) -> None:
+    """Format and print skills list."""
+    if detailed:
+        # Detailed table format
+        # Calculate column widths
+        name_width = max(len(s.get("name") or s["folder_name"]) for s in skills)
+        name_width = max(name_width, 4)  # minimum "Name" header
+
+        # Print header
+        print(f"\n  {'Name':<{name_width}}  Description")
+        print(f"  {'-' * name_width}  {'-' * 50}")
+
+        for skill in skills:
+            name = skill.get("name") or skill["folder_name"]
+            desc = skill.get("description") or "-"
+            # Truncate long descriptions
+            if len(desc) > 60:
+                desc = desc[:57] + "..."
+            print(f"  {Colors.CYAN}{name:<{name_width}}{Colors.RESET}  {desc}")
+    else:
+        # Compact format (names only)
+        names = [s.get("name") or s["folder_name"] for s in skills]
+        print(f"\n  {', '.join(names)}")
+
+
 def cmd_list(args):
     """List available skills from a repository."""
     repo_info = prepare_repo_info(args)
@@ -456,16 +485,41 @@ def cmd_list(args):
             log_warning("No skills found in repository")
             return 1
 
-        print(f"\n{Colors.BOLD}Skills in {args.repo}:{Colors.RESET}\n")
-
-        for skill in skills:
-            name = skill.get("name") or skill["folder_name"]
-            desc = skill.get("description", "No description")
-            print(f"  {Colors.CYAN}•{Colors.RESET} {Colors.BOLD}{name}{Colors.RESET}")
-            print(f"    {desc}")
-
+        print(f"\n{Colors.BOLD}Skills in {args.repo}:{Colors.RESET}")
+        format_skills_list(skills, detailed=args.detail)
         print(f"\n{Colors.GREEN}Total: {len(skills)} skills{Colors.RESET}\n")
         return 0
+
+
+def cmd_installed(args):
+    """List installed skills."""
+    # Determine target directory
+    if args.project:
+        target_dir = get_claude_skills_dir("project")
+        scope = "project"
+    else:
+        target_dir = get_claude_skills_dir("personal")
+        scope = "personal"
+
+    if args.target:
+        target_dir = Path(args.target)
+        scope = "custom"
+
+    if not target_dir.exists():
+        log_warning(f"Skills directory not found: {target_dir}")
+        return 1
+
+    skills = discover_skills(target_dir)
+
+    if not skills:
+        log_warning(f"No skills installed in {target_dir}")
+        return 0
+
+    print(f"\n{Colors.BOLD}Installed skills ({scope}):{Colors.RESET}")
+    print(f"  {Colors.YELLOW}Location: {target_dir}{Colors.RESET}")
+    format_skills_list(skills, detailed=args.detail)
+    print(f"\n{Colors.GREEN}Total: {len(skills)} skills{Colors.RESET}\n")
+    return 0
 
 
 def cmd_install(args):
@@ -682,8 +736,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # List skills from official Anthropic repo
-  skills-cli list --repo https://github.com/anthropics/skills/tree/main/skills
+  # List skills from official Anthropic repo (default)
+  skills-cli list
+  skills-cli list --detail
+
+  # List skills from a custom repo
+  skills-cli list --repo https://github.com/user/skills --detail
+
+  # List installed skills
+  skills-cli installed
+  skills-cli installed --detail
 
   # Install all skills from a custom repo
   skills-cli install --repo https://gitlab.example.com/team/skills --all
@@ -691,8 +753,8 @@ Examples:
   # Install specific skills
   skills-cli install --repo https://github.com/user/skills --skills pdf,xlsx,docx
 
-  # Interactive installation
-  skills-cli install --repo https://github.com/user/skills
+  # Interactive installation (uses default repo if not specified)
+  skills-cli install
 
   # Pack skills for Claude Desktop
   skills-cli pack --repo https://github.com/user/skills --output dist/desktop
@@ -706,24 +768,39 @@ Examples:
 
     # List command
     list_parser = subparsers.add_parser("list", help="List available skills from a repository")
-    list_parser.add_argument("--repo", "-r", required=True, help="Repository URL")
+    list_parser.add_argument("--repo", "-r", default=DEFAULT_REPO,
+                             help=f"Repository URL (default: Anthropic official)")
     list_parser.add_argument("--branch", "-b", help="Git branch (default: auto-detect or main)")
+    list_parser.add_argument("--detail", "-d", action="store_true",
+                             help="Show detailed info (name and description)")
     list_parser.set_defaults(func=cmd_list)
+
+    # Installed command
+    installed_parser = subparsers.add_parser("installed", help="List installed skills")
+    installed_parser.add_argument("--project", "-p", action="store_true",
+                                  help="Show project skills (.claude/skills/)")
+    installed_parser.add_argument("--target", "-t", help="Custom skills directory")
+    installed_parser.add_argument("--detail", "-d", action="store_true",
+                                  help="Show detailed info (name and description)")
+    installed_parser.set_defaults(func=cmd_installed)
 
     # Install command
     install_parser = subparsers.add_parser("install", help="Install skills from a repository")
-    install_parser.add_argument("--repo", "-r", required=True, help="Repository URL")
+    install_parser.add_argument("--repo", "-r", default=DEFAULT_REPO,
+                                help=f"Repository URL (default: Anthropic official)")
     install_parser.add_argument("--branch", "-b", help="Git branch (default: auto-detect or main)")
     install_parser.add_argument("--skills", "-s", help="Comma-separated list of skills to install")
     install_parser.add_argument("--all", "-a", action="store_true", help="Install all skills")
-    install_parser.add_argument("--project", "-p", action="store_true", help="Install to project .claude/skills/")
+    install_parser.add_argument("--project", "-p", action="store_true",
+                                help="Install to project .claude/skills/")
     install_parser.add_argument("--target", "-t", help="Custom target directory")
     install_parser.add_argument("--force", "-f", action="store_true", help="Overwrite existing skills")
     install_parser.set_defaults(func=cmd_install)
 
     # Pack command
     pack_parser = subparsers.add_parser("pack", help="Pack skills into zip files for Claude Desktop")
-    pack_parser.add_argument("--repo", "-r", required=True, help="Repository URL")
+    pack_parser.add_argument("--repo", "-r", default=DEFAULT_REPO,
+                             help=f"Repository URL (default: Anthropic official)")
     pack_parser.add_argument("--branch", "-b", help="Git branch (default: auto-detect or main)")
     pack_parser.add_argument("--skills", "-s", help="Comma-separated list of skills to pack")
     pack_parser.add_argument("--output", "-o", default="dist/desktop", help="Output directory")
@@ -731,9 +808,11 @@ Examples:
 
     # Sync command
     sync_parser = subparsers.add_parser("sync", help="Sync skills from a repository")
-    sync_parser.add_argument("--repo", "-r", required=True, help="Repository URL")
+    sync_parser.add_argument("--repo", "-r", default=DEFAULT_REPO,
+                             help=f"Repository URL (default: Anthropic official)")
     sync_parser.add_argument("--branch", "-b", help="Git branch (default: auto-detect or main)")
-    sync_parser.add_argument("--project", "-p", action="store_true", help="Sync to project .claude/skills/")
+    sync_parser.add_argument("--project", "-p", action="store_true",
+                             help="Sync to project .claude/skills/")
     sync_parser.add_argument("--target", "-t", help="Custom target directory")
     sync_parser.set_defaults(func=cmd_sync)
 
