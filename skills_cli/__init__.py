@@ -15,6 +15,8 @@ CLI Entry Point:
     - main: CLI main function
 """
 
+__version__ = "0.2.0"
+
 from .core import (
     # Constants
     DEFAULT_REPO,
@@ -59,7 +61,6 @@ from .core import (
 
 from .cli import main
 
-__version__ = "0.2.0"
 __all__ = [
     # Constants
     "DEFAULT_REPO",

@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from . import __version__
 from .core import (
     DEFAULT_REPO,
     COMMON_SKILL_DIRS,
@@ -693,6 +694,12 @@ Examples:
   # Sync skills from repository
   skills-cli sync
 """
+    )
+
+    parser.add_argument(
+        "-v", "--version",
+        action="version",
+        version=f"%(prog)s {__version__}"
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
