@@ -68,6 +68,10 @@ skills-cli install --all
 
 # Or pick specific ones
 skills-cli install --skills pdf,xlsx,docx
+
+# Use your own skills repository
+skills-cli list --repo https://github.com/your-username/your-skills
+skills-cli install --repo https://github.com/your-username/your-skills --all
 ```
 
 ## 📥 Installation
