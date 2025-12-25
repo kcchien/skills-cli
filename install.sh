@@ -3,7 +3,7 @@
 # Skills CLI Installer for macOS/Linux
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/user/skills-cli/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/kcchien/skills-cli/main/install.sh | bash
 #
 # Or with custom install directory:
 #   curl -fsSL ... | bash -s -- --prefix ~/.local
@@ -25,7 +25,7 @@ error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 
 # Default values
 INSTALL_DIR="${HOME}/.local/bin"
-REPO_URL="https://github.com/user/skills-cli"
+REPO_URL="https://github.com/kcchien/skills-cli"
 BRANCH="main"
 
 # Parse arguments

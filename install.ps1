@@ -2,7 +2,7 @@
 # Skills CLI Installer for Windows
 #
 # Usage (PowerShell):
-#   irm https://raw.githubusercontent.com/user/skills-cli/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/kcchien/skills-cli/main/install.ps1 | iex
 #
 # Or with custom install directory:
 #   $env:INSTALL_DIR = "C:\Tools"; irm ... | iex
@@ -10,7 +10,7 @@
 
 param(
     [string]$InstallDir = "$env:LOCALAPPDATA\skills-cli",
-    [string]$RepoUrl = "https://github.com/user/skills-cli",
+    [string]$RepoUrl = "https://github.com/kcchien/skills-cli",
     [string]$Branch = "main"
 )
 
