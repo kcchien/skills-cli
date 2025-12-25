@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skills-cli"
+version = "0.1.0"
+description = "Cross-platform CLI for managing Claude Code and Claude Desktop skills"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [
+    { name = "KC" }
+]
+keywords = ["claude", "anthropic", "skills", "cli", "ai"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Utilities",
+]
+
+# No external dependencies - uses only standard library
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=23.0",
+    "mypy>=1.0",
+]
+# Optional: colorama for Windows color support
+windows = [
+    "colorama>=0.4.6",
+]
+
+[project.scripts]
+skills-cli = "skills_cli:main"
+
+[project.urls]
+Homepage = "https://github.com/anthropics/skills"
+Documentation = "https://github.com/anthropics/skills#readme"
+Repository = "https://github.com/anthropics/skills"
+
+[tool.setuptools]
+py-modules = ["skills_cli"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
