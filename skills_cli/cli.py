@@ -84,7 +84,7 @@ def format_skills_list(skills: list[dict], detailed: bool = False, show_source: 
         print()
         for skill in skills:
             name = skill.get("name") or skill["folder_name"]
-            print(f"  {Colors.CYAN}•{Colors.RESET} {name}")
+            print(f"  {Colors.CYAN}-{Colors.RESET} {name}")
 
 
 def interactive_select(skills: list[dict]) -> list[dict]:
@@ -264,7 +264,7 @@ def cmd_remove(args):
         for skill in skills_to_remove:
             skill_name = skill.get("name") or skill["folder_name"]
             skill_path = skill["path"]
-            print(f"  {Colors.RED}•{Colors.RESET} {skill_name}")
+            print(f"  {Colors.RED}-{Colors.RESET} {skill_name}")
             print(f"    {Colors.YELLOW}Path: {skill_path}{Colors.RESET}")
         print()
         log_info(f"[DRY RUN] Would remove {len(skills_to_remove)} skills")
@@ -274,7 +274,7 @@ def cmd_remove(args):
         names = [s.get("name") or s["folder_name"] for s in skills_to_remove]
         print(f"\n{Colors.YELLOW}The following skills will be removed:{Colors.RESET}")
         for name in names:
-            print(f"  {Colors.RED}•{Colors.RESET} {name}")
+            print(f"  {Colors.RED}-{Colors.RESET} {name}")
         print()
 
         try:
@@ -372,7 +372,7 @@ def cmd_install(args):
             )
             if success:
                 if dry_run:
-                    print(f"  {Colors.CYAN}•{Colors.RESET} {skill_name}: {message}")
+                    print(f"  {Colors.CYAN}-{Colors.RESET} {skill_name}: {message}")
                 else:
                     log_success(f"{skill_name}: {message}")
                 installed += 1
@@ -515,7 +515,7 @@ def cmd_sync(args):
         print(f"\n{Colors.BOLD}Installed skills:{Colors.RESET}")
         for skill in skills:
             name = skill.get("name") or skill["folder_name"]
-            print(f"  {Colors.CYAN}•{Colors.RESET} {name}")
+            print(f"  {Colors.CYAN}-{Colors.RESET} {name}")
 
     return 0
 
@@ -539,7 +539,7 @@ def cmd_validate(args):
             if issues:
                 print(f"  {Colors.RED}✗{Colors.RESET} {Colors.BOLD}{skill_name}{Colors.RESET}")
                 for issue in issues:
-                    print(f"    {Colors.YELLOW}•{Colors.RESET} {issue}")
+                    print(f"    {Colors.YELLOW}-{Colors.RESET} {issue}")
                 total_issues += len(issues)
             else:
                 print(f"  {Colors.GREEN}✓{Colors.RESET} {skill_name}")
@@ -645,14 +645,14 @@ def cmd_doctor(args):
     if issues:
         print(f"  {Colors.RED}✗{Colors.RESET} {len(issues)} issues found")
         for issue in issues:
-            print(f"    • {issue}")
+            print(f"    - {issue}")
     else:
         print(f"  {Colors.GREEN}✓{Colors.RESET} No issues found")
 
     if warnings:
         print(f"  {Colors.YELLOW}⚠{Colors.RESET} {len(warnings)} warnings")
         for warning in warnings:
-            print(f"    • {warning}")
+            print(f"    - {warning}")
 
     print()
     return 1 if issues else 0
