@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "skills-cli"
-version = "0.1.0"
+version = "0.2.0"
 description = "Cross-platform CLI for managing Claude Code and Claude Desktop skills"
 readme = "README.md"
 license = { text = "MIT" }
@@ -50,7 +50,13 @@ Documentation = "https://github.com/anthropics/skills#readme"
 Repository = "https://github.com/anthropics/skills"
 
 [tool.setuptools]
-py-modules = ["skills_cli"]
+packages = ["skills_cli"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 
 [tool.black]
 line-length = 100
