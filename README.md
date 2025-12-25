@@ -1,51 +1,93 @@
-# Skills CLI
+<div align="center">
 
-Cross-platform CLI for managing Claude Code and Claude Desktop skills.
+# 🛠️ Skills CLI
 
-**One definition, multiple deployments** - Deploy skills from a central Git repository to both Claude Code CLI and Claude Desktop App.
+**Cross-platform CLI for managing Claude Code and Claude Desktop skills**
 
-## Features
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=for-the-badge)](https://github.com/kcchien/skills-cli)
 
-- **Cross-platform**: Windows, macOS, Linux
-- **Zero dependencies**: Uses only Python standard library
-- **Flexible repo support**: GitHub, GitLab, self-hosted Git with subdirectory paths
-- **Default repo**: Uses [Anthropic official skills](https://github.com/anthropics/skills) by default
-- **Selective installation**: Install all skills or choose specific ones
-- **Safety controls**: `--dry-run` preview, `--backup` before overwrite
-- **Source tracking**: Records installation source for each skill
-- **Dual deployment targets**:
-  - **Claude Code**: Sync to `~/.claude/skills/` or `.claude/skills/`
-  - **Claude Desktop**: Pack as `.zip` for manual/enterprise upload
+[![GitHub stars](https://img.shields.io/github/stars/kcchien/skills-cli?style=social)](https://github.com/kcchien/skills-cli/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/kcchien/skills-cli?style=social)](https://github.com/kcchien/skills-cli/network/members)
 
-## Installation
+---
 
-### Quick Install (macOS/Linux)
+*One definition, multiple deployments* — Deploy skills from a central Git repository to both Claude Code CLI and Claude Desktop App.
+
+[Installation](#installation) •
+[Usage](#usage) •
+[Python API](#python-api) •
+[Contributing](#development)
+
+</div>
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🖥️ **Cross-platform** | Windows, macOS, Linux |
+| 📦 **Zero dependencies** | Uses only Python standard library |
+| 🔗 **Flexible repo support** | GitHub, GitLab, self-hosted Git with subdirectory paths |
+| 🏠 **Default repo** | Uses [Anthropic official skills](https://github.com/anthropics/skills) by default |
+| 🎯 **Selective installation** | Install all skills or choose specific ones |
+| 🛡️ **Safety controls** | `--dry-run` preview, `--backup` before overwrite |
+| 📍 **Source tracking** | Records installation source for each skill |
+| 🚀 **Dual deployment** | Claude Code (`~/.claude/skills/`) + Claude Desktop (`.zip` packs) |
+
+## 🚀 Quick Start
+
+```bash
+# Install the CLI
+pip install git+https://github.com/kcchien/skills-cli.git
+
+# List available skills from Anthropic's official repo
+skills-cli list
+
+# Install all skills
+skills-cli install --all
+
+# Or pick specific ones
+skills-cli install --skills pdf,xlsx,docx
+```
+
+## 📥 Installation
+
+<details>
+<summary><b>macOS / Linux</b></summary>
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kcchien/skills-cli/main/install.sh | bash
 ```
+</details>
 
-### Quick Install (Windows PowerShell)
+<details>
+<summary><b>Windows PowerShell</b></summary>
 
 ```powershell
 irm https://raw.githubusercontent.com/kcchien/skills-cli/main/install.ps1 | iex
 ```
+</details>
 
-### From Source
+<details>
+<summary><b>From Source (pip)</b></summary>
 
 ```bash
 git clone https://github.com/kcchien/skills-cli.git
 cd skills-cli
 pip install -e .
 ```
+</details>
 
-### Direct Usage (No Install)
+<details>
+<summary><b>Direct Usage (No Install)</b></summary>
 
 ```bash
 python skills_cli.py <command> [options]
 ```
+</details>
 
-## Usage
+## 📖 Usage
 
 ### List Available Skills
 
@@ -169,7 +211,7 @@ skills-cli sync --project
 skills-cli sync --repo https://github.com/user/skills
 ```
 
-## Supported Repository URL Formats
+## 🔗 Supported Repository URL Formats
 
 | Format | Example |
 |--------|---------|
@@ -180,7 +222,7 @@ skills-cli sync --repo https://github.com/user/skills
 | SSH | `git@github.com:user/skills.git` |
 | Self-hosted | `https://git.company.com/team/skills` |
 
-## Architecture
+## 🏗️ Architecture
 
 The CLI is organized as a Python package with a clean separation between core logic and CLI handling:
 
@@ -196,7 +238,7 @@ skills-cli/
 └── pyproject.toml
 ```
 
-### Python API
+### 🐍 Python API
 
 The core functions can be imported and used programmatically:
 
@@ -231,9 +273,10 @@ issues = validate_skill_md(Path("./my-skill"))
 # [] if valid, or ['Missing required field: name', ...] if issues
 ```
 
-## CI/CD Integration
+## ⚙️ CI/CD Integration
 
-### GitHub Actions
+<details>
+<summary><b>GitHub Actions Example</b></summary>
 
 ```yaml
 name: Build Skills
@@ -271,12 +314,14 @@ jobs:
           path: dist/desktop/
 ```
 
-## Requirements
+</details>
+
+## 📋 Requirements
 
 - Python 3.10+
 - Git 2.25+ (for sparse-checkout support)
 
-## Development
+## 🧑‍💻 Development
 
 ```bash
 # Clone the repository
@@ -293,6 +338,14 @@ pytest tests/ -v
 pytest tests/test_core.py::TestParseRepoUrl -v
 ```
 
-## License
+## 📄 License
 
-MIT
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
+Made with ❤️ for the Claude community
+
+</div>
