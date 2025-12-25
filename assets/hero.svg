@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="box1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e94560"/>
+      <stop offset="100%" style="stop-color:#ff6b6b"/>
+    </linearGradient>
+    <linearGradient id="box2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f3460"/>
+      <stop offset="100%" style="stop-color:#16537e"/>
+    </linearGradient>
+    <linearGradient id="box3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#533483"/>
+      <stop offset="100%" style="stop-color:#7952b3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="300" fill="url(#bg)"/>
+
+  <!-- Git Repository Box -->
+  <rect x="40" y="100" width="150" height="80" rx="12" fill="url(#box1)"/>
+  <text x="115" y="135" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Git Repository</text>
+  <text x="115" y="155" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Arial, sans-serif" font-size="11">GitHub / GitLab</text>
+
+  <!-- Skills CLI Box (Center) -->
+  <rect x="310" y="90" width="180" height="100" rx="15" fill="url(#box2)" stroke="#4fc3f7" stroke-width="2"/>
+  <text x="400" y="130" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Skills CLI</text>
+  <text x="400" y="155" text-anchor="middle" fill="#4fc3f7" font-family="monospace" font-size="12">skills-cli install</text>
+  <text x="400" y="175" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="Arial, sans-serif" font-size="10">Cross-platform</text>
+
+  <!-- Claude Code Box -->
+  <rect x="590" y="60" width="160" height="70" rx="10" fill="url(#box3)"/>
+  <text x="670" y="90" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="13" font-weight="bold">Claude Code</text>
+  <text x="670" y="110" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="monospace" font-size="10">~/.claude/skills/</text>
+
+  <!-- Claude Desktop Box -->
+  <rect x="590" y="150" width="160" height="70" rx="10" fill="url(#box3)"/>
+  <text x="670" y="180" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="13" font-weight="bold">Claude Desktop</text>
+  <text x="670" y="200" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="monospace" font-size="10">.zip packs</text>
+
+  <!-- Arrows -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4fc3f7"/>
+    </marker>
+  </defs>
+
+  <!-- Arrow: Git -> Skills CLI -->
+  <line x1="195" y1="140" x2="305" y2="140" stroke="#4fc3f7" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="250" y="130" text-anchor="middle" fill="#4fc3f7" font-family="Arial, sans-serif" font-size="10">clone</text>
+
+  <!-- Arrow: Skills CLI -> Claude Code -->
+  <line x1="495" y1="120" x2="585" y2="95" stroke="#4fc3f7" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="540" y="95" text-anchor="middle" fill="#4fc3f7" font-family="Arial, sans-serif" font-size="10">install</text>
+
+  <!-- Arrow: Skills CLI -> Claude Desktop -->
+  <line x1="495" y1="160" x2="585" y2="185" stroke="#4fc3f7" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="540" y="185" text-anchor="middle" fill="#4fc3f7" font-family="Arial, sans-serif" font-size="10">pack</text>
+
+  <!-- Feature badges -->
+  <rect x="120" y="250" width="100" height="28" rx="14" fill="rgba(233,69,96,0.3)" stroke="#e94560" stroke-width="1"/>
+  <text x="170" y="269" text-anchor="middle" fill="#ff6b6b" font-family="Arial, sans-serif" font-size="11" font-weight="bold">Git-First</text>
+
+  <rect x="350" y="250" width="100" height="28" rx="14" fill="rgba(79,195,247,0.3)" stroke="#4fc3f7" stroke-width="1"/>
+  <text x="400" y="269" text-anchor="middle" fill="#4fc3f7" font-family="Arial, sans-serif" font-size="11" font-weight="bold">Dual Deploy</text>
+
+  <rect x="580" y="250" width="120" height="28" rx="14" fill="rgba(121,82,179,0.3)" stroke="#7952b3" stroke-width="1"/>
+  <text x="640" y="269" text-anchor="middle" fill="#a78bfa" font-family="Arial, sans-serif" font-size="11" font-weight="bold">Metadata Track</text>
+</svg>

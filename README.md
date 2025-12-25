@@ -4,6 +4,8 @@
 
 **Cross-platform CLI for managing Claude Code and Claude Desktop skills**
 
+<img src="assets/hero.svg" alt="Skills CLI Architecture" width="700"/>
+
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=for-the-badge)](https://github.com/kcchien/skills-cli)
