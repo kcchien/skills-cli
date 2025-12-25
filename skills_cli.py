@@ -522,6 +522,89 @@ def cmd_installed(args):
     return 0
 
 
+def cmd_remove(args):
+    """Remove installed skills."""
+    # Determine target directory
+    if args.project:
+        target_dir = get_claude_skills_dir("project")
+        scope = "project"
+    else:
+        target_dir = get_claude_skills_dir("personal")
+        scope = "personal"
+
+    if args.target:
+        target_dir = Path(args.target)
+        scope = "custom"
+
+    if not target_dir.exists():
+        log_warning(f"Skills directory not found: {target_dir}")
+        return 1
+
+    installed_skills = discover_skills(target_dir)
+
+    if not installed_skills:
+        log_warning(f"No skills installed in {target_dir}")
+        return 0
+
+    # Determine which skills to remove
+    if args.skills:
+        # Filter by specified skill names
+        requested = set(s.strip().lower() for s in args.skills.split(","))
+        skills_to_remove = [
+            s for s in installed_skills
+            if s["folder_name"].lower() in requested
+            or (s.get("name") and s["name"].lower() in requested)
+        ]
+
+        if not skills_to_remove:
+            log_error(f"No matching skills found for: {args.skills}")
+            log_info("Installed skills: " + ", ".join(s["folder_name"] for s in installed_skills))
+            return 1
+    elif args.all:
+        skills_to_remove = installed_skills
+    else:
+        # Interactive selection
+        skills_to_remove = interactive_select(installed_skills)
+
+    if not skills_to_remove:
+        log_info("No skills selected")
+        return 0
+
+    # Confirm removal
+    if not args.force:
+        names = [s.get("name") or s["folder_name"] for s in skills_to_remove]
+        print(f"\n{Colors.YELLOW}The following skills will be removed:{Colors.RESET}")
+        for name in names:
+            print(f"  {Colors.RED}•{Colors.RESET} {name}")
+        print()
+
+        try:
+            confirm = input(f"{Colors.BOLD}Confirm removal? [y/N]{Colors.RESET} ").strip().lower()
+        except (KeyboardInterrupt, EOFError):
+            print()
+            return 0
+
+        if confirm not in ("y", "yes"):
+            log_info("Cancelled")
+            return 0
+
+    # Remove skills
+    removed = 0
+    for skill in skills_to_remove:
+        skill_path = skill["path"]
+        skill_name = skill.get("name") or skill["folder_name"]
+        try:
+            shutil.rmtree(skill_path)
+            log_success(f"Removed: {skill_name}")
+            removed += 1
+        except Exception as e:
+            log_error(f"Failed to remove {skill_name}: {e}")
+
+    print()
+    log_success(f"Removed {removed}/{len(skills_to_remove)} skills")
+    return 0
+
+
 def cmd_install(args):
     """Install skills from a repository."""
     repo_info = prepare_repo_info(args)
@@ -747,6 +830,11 @@ Examples:
   skills-cli installed
   skills-cli installed --detail
 
+  # Remove skills
+  skills-cli remove --skills pdf,xlsx
+  skills-cli remove --all --force
+  skills-cli uninstall --skills docx   # alias for remove
+
   # Install all skills from a custom repo
   skills-cli install --repo https://gitlab.example.com/team/skills --all
 
@@ -783,6 +871,18 @@ Examples:
     installed_parser.add_argument("--detail", "-d", action="store_true",
                                   help="Show detailed info (name and description)")
     installed_parser.set_defaults(func=cmd_installed)
+
+    # Remove command
+    remove_parser = subparsers.add_parser("remove", aliases=["uninstall"],
+                                          help="Remove installed skills")
+    remove_parser.add_argument("--skills", "-s", help="Comma-separated list of skills to remove")
+    remove_parser.add_argument("--all", "-a", action="store_true", help="Remove all skills")
+    remove_parser.add_argument("--project", "-p", action="store_true",
+                               help="Remove from project .claude/skills/")
+    remove_parser.add_argument("--target", "-t", help="Custom skills directory")
+    remove_parser.add_argument("--force", "-f", action="store_true",
+                               help="Skip confirmation prompt")
+    remove_parser.set_defaults(func=cmd_remove)
 
     # Install command
     install_parser = subparsers.add_parser("install", help="Install skills from a repository")
