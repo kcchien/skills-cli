@@ -76,39 +76,31 @@ skills-cli install --repo https://github.com/your-username/your-skills --all
 
 ## 📥 Installation
 
-<details>
-<summary><b>macOS / Linux</b></summary>
+### macOS / Linux
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kcchien/skills-cli/main/install.sh | bash
 ```
-</details>
 
-<details>
-<summary><b>Windows PowerShell</b></summary>
+### Windows PowerShell
 
 ```powershell
 irm https://raw.githubusercontent.com/kcchien/skills-cli/main/install.ps1 | iex
 ```
-</details>
 
-<details>
-<summary><b>From Source (pip)</b></summary>
+### From Source (pip)
 
 ```bash
 git clone https://github.com/kcchien/skills-cli.git
 cd skills-cli
 pip install -e .
 ```
-</details>
 
-<details>
-<summary><b>Direct Usage (No Install)</b></summary>
+### Direct Usage (No Install)
 
 ```bash
 python skills_cli.py <command> [options]
 ```
-</details>
 
 ## 📖 Usage
 
