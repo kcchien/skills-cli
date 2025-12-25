@@ -45,9 +45,9 @@ windows = [
 skills-cli = "skills_cli:main"
 
 [project.urls]
-Homepage = "https://github.com/anthropics/skills"
-Documentation = "https://github.com/anthropics/skills#readme"
-Repository = "https://github.com/anthropics/skills"
+Homepage = "https://github.com/kcchien/skills-cli"
+Documentation = "https://github.com/kcchien/skills-cli#readme"
+Repository = "https://github.com/kcchien/skills-cli"
 
 [tool.setuptools]
 packages = ["skills_cli"]

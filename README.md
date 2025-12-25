@@ -22,19 +22,19 @@ Cross-platform CLI for managing Claude Code and Claude Desktop skills.
 ### Quick Install (macOS/Linux)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/user/skills-cli/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/kcchien/skills-cli/main/install.sh | bash
 ```
 
 ### Quick Install (Windows PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/user/skills-cli/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/kcchien/skills-cli/main/install.ps1 | iex
 ```
 
 ### From Source
 
 ```bash
-git clone https://github.com/user/skills-cli.git
+git clone https://github.com/kcchien/skills-cli.git
 cd skills-cli
 pip install -e .
 ```
@@ -280,7 +280,7 @@ jobs:
 
 ```bash
 # Clone the repository
-git clone https://github.com/user/skills-cli.git
+git clone https://github.com/kcchien/skills-cli.git
 cd skills-cli
 
 # Install in development mode
