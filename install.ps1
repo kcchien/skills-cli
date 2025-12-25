@@ -69,9 +69,9 @@ Write-Info "Installing skills-cli via pip..."
 
 try {
     if ($UserInstall) {
-        python -m pip install --upgrade --user "git+$RepoUrl"
+        python -m pip install --upgrade --no-cache-dir --user "git+$RepoUrl"
     } else {
-        python -m pip install --upgrade "git+$RepoUrl"
+        python -m pip install --upgrade --no-cache-dir "git+$RepoUrl"
     }
 
     if ($LASTEXITCODE -ne 0) {

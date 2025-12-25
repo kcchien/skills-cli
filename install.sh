@@ -97,7 +97,7 @@ fi
 # Install via pip
 info "Installing skills-cli via pip..."
 
-PIP_ARGS="install --upgrade"
+PIP_ARGS="install --upgrade --no-cache-dir"
 if [[ "$USER_INSTALL" == true ]]; then
     PIP_ARGS="$PIP_ARGS --user"
 fi
