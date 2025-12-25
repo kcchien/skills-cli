@@ -81,8 +81,10 @@ def format_skills_list(skills: list[dict], detailed: bool = False, show_source: 
                         source = source[:47] + "..."
                     print(f"  {' ' * name_width}  {Colors.YELLOW}↳ {source} ({branch}@{commit}){Colors.RESET}")
     else:
-        names = [s.get("name") or s["folder_name"] for s in skills]
-        print(f"\n  {', '.join(names)}")
+        print()
+        for skill in skills:
+            name = skill.get("name") or skill["folder_name"]
+            print(f"  {Colors.CYAN}•{Colors.RESET} {name}")
 
 
 def interactive_select(skills: list[dict]) -> list[dict]:
