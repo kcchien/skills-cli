@@ -315,9 +315,3 @@ pytest tests/test_core.py::TestParseRepoUrl -v
 MIT License - see [LICENSE](LICENSE) for details.
 
 ---
-
-<div align="center">
-
-Made with ❤️ for the Claude community
-
-</div>
