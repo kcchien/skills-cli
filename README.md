@@ -22,6 +22,25 @@
 
 </div>
 
+## 💡 Why Skills CLI?
+
+<table>
+<tr>
+<td width="33%" align="center">
+<h3>🔗 Git-First</h3>
+<p>Any Git repository can become a skills source. Use official repos, fork your own, or host privately — full flexibility.</p>
+</td>
+<td width="33%" align="center">
+<h3>🎯 Dual Environment</h3>
+<p>One skill definition, two targets. Deploy to <b>Claude Code CLI</b> and pack for <b>Claude Desktop</b> simultaneously.</p>
+</td>
+<td width="33%" align="center">
+<h3>📍 Metadata Tracking</h3>
+<p>Every installed skill records its source repo, commit hash, and install time. Always know where your skills came from.</p>
+</td>
+</tr>
+</table>
+
 ## ✨ Features
 
 | Feature | Description |
