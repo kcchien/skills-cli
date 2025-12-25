@@ -4,17 +4,21 @@
 # Usage (PowerShell):
 #   irm https://raw.githubusercontent.com/kcchien/skills-cli/main/install.ps1 | iex
 #
-# Or with custom install directory:
-#   $env:INSTALL_DIR = "C:\Tools"; irm ... | iex
+# Or with custom options:
+#   $env:USER_INSTALL = "true"; irm ... | iex    # Install to user site-packages
 #
 
 param(
-    [string]$InstallDir = "$env:LOCALAPPDATA\skills-cli",
-    [string]$RepoUrl = "https://github.com/kcchien/skills-cli",
-    [string]$Branch = "main"
+    [string]$RepoUrl = "https://github.com/kcchien/skills-cli.git",
+    [switch]$User = $false
 )
 
 $ErrorActionPreference = "Stop"
+
+# Check for environment variable override
+if ($env:USER_INSTALL -eq "true") {
+    $User = $true
+}
 
 # Colors
 function Write-Info { Write-Host "[INFO] $args" -ForegroundColor Blue }
@@ -57,47 +61,38 @@ try {
     exit 1
 }
 
-# Create install directory
-Write-Info "Installing to $InstallDir..."
-New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
-
-# Download the script
-Write-Info "Downloading from $RepoUrl..."
-
-$scriptUrl = "$RepoUrl/raw/$Branch/skills_cli.py"
-$scriptPath = Join-Path $InstallDir "skills_cli.py"
-$wrapperPath = Join-Path $InstallDir "skills-cli.cmd"
-
+# Check pip
 try {
-    Invoke-WebRequest -Uri $scriptUrl -OutFile $scriptPath -UseBasicParsing
-    Write-Success "Downloaded skills_cli.py"
+    python -m pip --version | Out-Null
 } catch {
-    Write-Err "Failed to download: $_"
+    Write-Err "pip is required but not found"
     exit 1
 }
 
-# Create CMD wrapper
-$wrapperContent = @"
-@echo off
-python "%~dp0skills_cli.py" %*
-"@
+# Install via pip
+Write-Info "Installing skills-cli via pip..."
 
-Set-Content -Path $wrapperPath -Value $wrapperContent -Encoding ASCII
-Write-Success "Created skills-cli.cmd wrapper"
+$pipArgs = @("install", "--upgrade")
+if ($User) {
+    $pipArgs += "--user"
+}
+$pipArgs += "git+$RepoUrl"
 
-# Update PATH
-$currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
-if ($currentPath -notlike "*$InstallDir*") {
-    Write-Info "Adding to PATH..."
-    $newPath = "$currentPath;$InstallDir"
-    [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-    Write-Success "Added to user PATH"
-    Write-Warn "Restart your terminal for PATH changes to take effect"
-} else {
-    Write-Success "Already in PATH"
+try {
+    $output = python -m pip @pipArgs 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Success "Installed successfully"
+    } else {
+        Write-Err "Installation failed"
+        Write-Host $output
+        exit 1
+    }
+} catch {
+    Write-Err "Installation failed: $_"
+    exit 1
 }
 
-# Optional: Install colorama for better colors
+# Install colorama for better colors (optional)
 Write-Info "Installing optional dependencies..."
 try {
     python -m pip install --quiet colorama 2>&1 | Out-Null
@@ -106,12 +101,46 @@ try {
     Write-Warn "Could not install colorama (optional)"
 }
 
+# Verify installation
+$skillsCliPath = $null
+try {
+    $skillsCliPath = (Get-Command skills-cli -ErrorAction SilentlyContinue).Source
+} catch {}
+
+if ($skillsCliPath) {
+    Write-Success "Installed to $skillsCliPath"
+} else {
+    # Check user Scripts folder
+    $userScripts = Join-Path $env:APPDATA "Python\Python*\Scripts"
+    $possiblePaths = Get-ChildItem $userScripts -ErrorAction SilentlyContinue |
+                     Where-Object { Test-Path (Join-Path $_.FullName "skills-cli.exe") }
+
+    if ($possiblePaths) {
+        $scriptsPath = $possiblePaths[0].FullName
+        Write-Success "Installed to $scriptsPath"
+
+        # Check if in PATH
+        if ($env:Path -notlike "*$scriptsPath*") {
+            Write-Warn "$scriptsPath is not in PATH"
+            Write-Info "Adding to user PATH..."
+
+            $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
+            if ($currentPath -notlike "*$scriptsPath*") {
+                $newPath = "$currentPath;$scriptsPath"
+                [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+                Write-Success "Added to user PATH"
+                Write-Warn "Restart your terminal for PATH changes to take effect"
+            }
+        }
+    }
+}
+
 Write-Host ""
 Write-Success "Installation complete!"
 Write-Host ""
 Write-Host "  Usage:"
-Write-Host "    skills-cli list --repo https://github.com/anthropics/skills/tree/main/skills"
-Write-Host "    skills-cli install --repo <url> --all"
+Write-Host "    skills-cli list"
+Write-Host "    skills-cli install --all"
 Write-Host "    skills-cli --help"
 Write-Host ""
 
