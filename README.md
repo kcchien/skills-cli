@@ -273,49 +273,6 @@ issues = validate_skill_md(Path("./my-skill"))
 # [] if valid, or ['Missing required field: name', ...] if issues
 ```
 
-## ⚙️ CI/CD Integration
-
-<details>
-<summary><b>GitHub Actions Example</b></summary>
-
-```yaml
-name: Build Skills
-
-on:
-  push:
-    branches: [main]
-    paths:
-      - 'skills/**'
-
-jobs:
-  pack-desktop:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install skills-cli
-        run: pip install skills-cli
-
-      - name: Validate all skills
-        run: skills-cli validate --repo .
-
-      - name: Pack all skills
-        run: skills-cli pack --repo . --output dist/desktop
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: desktop-skills
-          path: dist/desktop/
-```
-
-</details>
-
 ## 📋 Requirements
 
 - Python 3.10+
