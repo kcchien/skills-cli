@@ -518,50 +518,61 @@ def cmd_sync(args):
 
 def cmd_validate(args):
     """validate 指令：驗證 SKILL.md 格式。"""
+
+    def do_validate(skills_to_validate: list[dict]) -> int:
+        """執行實際的驗證邏輯。"""
+        if not skills_to_validate:
+            log_warning("No skills to validate")
+            return 1
+
+        print(f"\n{Colors.BOLD}Validating {len(skills_to_validate)} skills...{Colors.RESET}\n")
+
+        total_issues = 0
+        for skill in skills_to_validate:
+            skill_name = skill.get("name") or skill["folder_name"]
+            issues = validate_skill_md(skill["path"])
+
+            if issues:
+                print(f"  {Colors.RED}✗{Colors.RESET} {Colors.BOLD}{skill_name}{Colors.RESET}")
+                for issue in issues:
+                    print(f"    {Colors.YELLOW}•{Colors.RESET} {issue}")
+                total_issues += len(issues)
+            else:
+                print(f"  {Colors.GREEN}✓{Colors.RESET} {skill_name}")
+
+        print()
+        if total_issues > 0:
+            log_warning(f"Found {total_issues} issues in {len(skills_to_validate)} skills")
+            return 1
+        else:
+            log_success(f"All {len(skills_to_validate)} skills are valid")
+            return 0
+
+    # 根據不同來源取得要驗證的 skills
     if args.path:
         skill_path = Path(args.path)
         if skill_path.is_file():
             skill_path = skill_path.parent
         skills_to_validate = [{"path": skill_path, "folder_name": skill_path.name}]
+        return do_validate(skills_to_validate)
+
     elif args.repo:
+        # 從遠端 repo 驗證：需要在暫存目錄存在期間完成驗證
         repo_info = prepare_repo_info(args)
         with tempfile.TemporaryDirectory() as tmp:
             tmp_dir = Path(tmp) / "repo"
             cloned_root = clone_repo(repo_info, tmp_dir)
             skills_root, skills_to_validate = find_skills_root(cloned_root)
+            return do_validate(skills_to_validate)
+
     else:
+        # 驗證本地安裝的 skills
         if args.project:
             target_dir = get_claude_skills_dir("project")
         else:
             target_dir = get_claude_skills_dir("personal")
         skills_to_validate = discover_skills(target_dir)
-
-    if not skills_to_validate:
-        log_warning("No skills to validate")
-        return 1
-
-    print(f"\n{Colors.BOLD}Validating {len(skills_to_validate)} skills...{Colors.RESET}\n")
-
-    total_issues = 0
-    for skill in skills_to_validate:
-        skill_name = skill.get("name") or skill["folder_name"]
-        issues = validate_skill_md(skill["path"])
-
-        if issues:
-            print(f"  {Colors.RED}✗{Colors.RESET} {Colors.BOLD}{skill_name}{Colors.RESET}")
-            for issue in issues:
-                print(f"    {Colors.YELLOW}•{Colors.RESET} {issue}")
-            total_issues += len(issues)
-        else:
-            print(f"  {Colors.GREEN}✓{Colors.RESET} {skill_name}")
-
-    print()
-    if total_issues > 0:
-        log_warning(f"Found {total_issues} issues in {len(skills_to_validate)} skills")
-        return 1
-    else:
-        log_success(f"All {len(skills_to_validate)} skills are valid")
-        return 0
+        return do_validate(skills_to_validate)
 
 
 def cmd_doctor(args):
