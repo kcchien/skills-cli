@@ -696,6 +696,12 @@ Examples:
 
   # Sync skills from repository
   skills-cli sync
+
+  # Use custom repository
+  skills-cli list --repo https://github.com/user/my-skills
+  skills-cli list --repo https://github.com/user/my-skills --branch develop
+  skills-cli install --repo https://github.com/user/my-skills --all
+  skills-cli install --repo https://github.com/user/my-skills --skills skill1,skill2
 """
     )
 
