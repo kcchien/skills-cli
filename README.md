@@ -106,6 +106,36 @@ python skills_cli.py <command> [options]
 
 ## 📖 Usage
 
+### Getting Help
+
+```bash
+# Show all available commands
+skills-cli --help
+
+# Show help for a specific command
+skills-cli list --help
+skills-cli install --help
+```
+
+**Example: Using custom repository**
+
+```bash
+# List skills from a custom repository
+skills-cli list --repo https://github.com/your-username/your-skills
+
+# List skills from a specific branch
+skills-cli list --repo https://github.com/your-username/your-skills --branch develop
+
+# Install all skills from a custom repository
+skills-cli install --repo https://github.com/your-username/your-skills --all
+
+# Install specific skills from a custom repository
+skills-cli install --repo https://github.com/your-username/your-skills --skills my-skill,another-skill
+
+# Install from a repository subdirectory
+skills-cli install --repo https://github.com/org/monorepo/tree/main/packages/skills --all
+```
+
 ### List Available Skills
 
 ```bash
