@@ -42,13 +42,22 @@ from .core import (
 # Helper Functions
 # =============================================================================
 
+def get_repo_from_args(args) -> str:
+    """Get repository URL from args, supporting both positional and --repo flag."""
+    # Positional argument takes precedence if provided
+    if hasattr(args, 'repo_url') and args.repo_url:
+        return args.repo_url
+    return args.repo
+
+
 def prepare_repo_info(args) -> dict:
     """Prepare repo info, handling branch override and auto-detection."""
-    repo_info = parse_repo_url(args.repo)
+    repo_url = get_repo_from_args(args)
+    repo_info = parse_repo_url(repo_url)
 
     if hasattr(args, 'branch') and args.branch:
         repo_info["branch"] = args.branch
-    elif repo_info["branch"] == "main" and "/tree/" not in args.repo:
+    elif repo_info["branch"] == "main" and "/tree/" not in repo_url:
         log_info("Auto-detecting default branch...")
         repo_info["branch"] = detect_default_branch(repo_info["clone_url"])
 
@@ -697,10 +706,14 @@ Examples:
   # Sync skills from repository
   skills-cli sync
 
-  # Use custom repository
-  skills-cli list --repo https://github.com/user/my-skills
+  # Use custom repository (URL can be positional or with --repo flag)
+  skills-cli list https://github.com/user/my-skills
+  skills-cli list https://github.com/user/dotfiles/tree/master/claude
+  skills-cli install https://github.com/user/my-skills --all
+  skills-cli install https://github.com/user/dotfiles/tree/master/claude -a
+
+  # Alternative: use --repo flag
   skills-cli list --repo https://github.com/user/my-skills --branch develop
-  skills-cli install --repo https://github.com/user/my-skills --all
   skills-cli install --repo https://github.com/user/my-skills --skills skill1,skill2
 """
     )
@@ -715,6 +728,8 @@ Examples:
 
     # List command
     list_parser = subparsers.add_parser("list", help="List available skills from a repository")
+    list_parser.add_argument("repo_url", nargs="?", default=None,
+                             help="Repository URL (positional, e.g., https://github.com/user/repo)")
     list_parser.add_argument("--repo", "-r", default=DEFAULT_REPO,
                              help=f"Repository URL (default: Anthropic official)")
     list_parser.add_argument("--branch", "-b", help="Git branch (default: auto-detect or main)")
@@ -747,6 +762,8 @@ Examples:
 
     # Install command
     install_parser = subparsers.add_parser("install", help="Install skills from a repository")
+    install_parser.add_argument("repo_url", nargs="?", default=None,
+                                help="Repository URL (positional, e.g., https://github.com/user/repo)")
     install_parser.add_argument("--repo", "-r", default=DEFAULT_REPO,
                                 help=f"Repository URL (default: Anthropic official)")
     install_parser.add_argument("--branch", "-b", help="Git branch (default: auto-detect or main)")
@@ -764,6 +781,8 @@ Examples:
 
     # Pack command
     pack_parser = subparsers.add_parser("pack", help="Pack skills into zip files for Claude Desktop")
+    pack_parser.add_argument("repo_url", nargs="?", default=None,
+                             help="Repository URL (positional, e.g., https://github.com/user/repo)")
     pack_parser.add_argument("--repo", "-r", default=DEFAULT_REPO,
                              help=f"Repository URL (default: Anthropic official)")
     pack_parser.add_argument("--branch", "-b", help="Git branch (default: auto-detect or main)")
@@ -773,6 +792,8 @@ Examples:
 
     # Sync command
     sync_parser = subparsers.add_parser("sync", help="Sync skills from a repository")
+    sync_parser.add_argument("repo_url", nargs="?", default=None,
+                             help="Repository URL (positional, e.g., https://github.com/user/repo)")
     sync_parser.add_argument("--repo", "-r", default=DEFAULT_REPO,
                              help=f"Repository URL (default: Anthropic official)")
     sync_parser.add_argument("--branch", "-b", help="Git branch (default: auto-detect or main)")
