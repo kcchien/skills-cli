@@ -354,7 +354,7 @@ def discover_skills(skills_dir: Path) -> list[dict]:
                 skill_info["folder_name"] = item.name
                 skills.append(skill_info)
 
-    return sorted(skills, key=lambda x: x.get("name", x["folder_name"]))
+    return sorted(skills, key=lambda x: x.get("name") or x["folder_name"])
 
 
 def find_skills_root(repo_root: Path) -> tuple[Path, list[dict]]:
@@ -416,7 +416,7 @@ def find_skills_root(repo_root: Path) -> tuple[Path, list[dict]]:
                 skill_info["folder_name"] = skill_folder.name
                 all_skills.append(skill_info)
             if all_skills:
-                return repo_root, sorted(all_skills, key=lambda x: x.get("name", x["folder_name"]))
+                return repo_root, sorted(all_skills, key=lambda x: x.get("name") or x["folder_name"])
 
     return repo_root, []
 
